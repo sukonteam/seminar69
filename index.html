@@ -61,6 +61,10 @@
   .bank{display:grid;gap:8px;margin-top:6px}
   .acct{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--bd);border-radius:10px;background:#f9fbfe;font-size:14px}
   .acct b{display:block;font-size:15px}
+  .acct .info{flex:1;display:flex;align-items:center;gap:12px;min-width:0}
+  .bk{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;letter-spacing:.3px;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+  .bk{position:relative;overflow:hidden}.bk img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;border-radius:50%}
+  .bk.gsb{background:#EB198D}.bk.ttb{background:#0050F0}.bk.bbl{background:#1E4598}.bk.ktb{background:#00A6E6}
   .acct .no{font-family:ui-monospace,monospace;font-size:15px;letter-spacing:.3px}
   .copy{flex:none;border:1px solid var(--bd);background:#fff;border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;color:var(--c);cursor:pointer}
   .grp{font-size:13px;font-weight:700;color:var(--mut);margin:8px 0 0}
@@ -84,6 +88,18 @@
   .done .total{font-size:30px;font-weight:700;color:var(--c);margin:6px 0}
   .foot{text-align:center;margin:18px 0 6px}
   .foot a{color:var(--mut);font-size:13px}
+  .drop{display:flex;align-items:center;gap:12px;padding:14px;border:2px dashed var(--bd);border-radius:10px;cursor:pointer;background:#f9fbfe;transition:border-color .15s}
+  .drop:hover{border-color:var(--c2)}
+  .drop input{display:none}
+  .drop .ic{flex:none;width:44px;height:44px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:22px}
+  .drop b{display:block;font-size:15px}
+  .drop small{color:var(--mut);font-size:13px}
+  .prev{display:flex;align-items:center;gap:12px;margin-top:10px;padding:10px;border:1px solid var(--bd);border-radius:10px}
+  .prev img{width:64px;height:84px;object-fit:cover;border-radius:6px;border:1px solid var(--bd)}
+  .prev .nm{flex:1;font-size:14px;word-break:break-all}
+  .prev button{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;color:var(--err);cursor:pointer}
+  input[type=date]{width:100%;padding:12px 14px;font:inherit;font-size:16px;border:1.5px solid var(--bd);border-radius:10px;background:#fff;color:var(--tx);min-height:50px}
+  .hint{font-size:13px;color:var(--mut);margin-top:4px}
   .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 
   @media (max-width:520px){
@@ -195,7 +211,7 @@
           <label class="t req" for="size">Size เสื้อ</label>
           <select id="size">
             <option value="">-- เลือกไซส์ --</option>
-            <option>S</option><option>M</option><option>L</option>
+            <option>SS</option><option>S</option><option>M</option><option>L</option>
             <option>XL</option><option>XXL</option><option>XXXL</option>
           </select>
           <label class="t req" for="shipping">ข้อมูลสำหรับการจัดส่ง (ชื่อ-ที่อยู่ เบอร์โทรศัพท์)</label>
@@ -208,14 +224,30 @@
         <p class="sub">ค่าใช้จ่าย: นักศึกษา 3,200 บาท / ผู้ติดตาม 1,500 บาท</p>
         <div class="bank">
           <p class="grp">กลุ่ม อ.ดร.สุคนธ์ บุญมาก</p>
-          <div class="acct"><span><b>คณะนิติศาสตร์</b>ธนาคารออมสิน <span class="no">050-4-0160010-6</span></span><button type="button" class="copy" data-copy="050401600106">คัดลอก</button></div>
-          <div class="acct"><span><b>คณะรัฐศาสตร์</b>ธนาคารทีทีบี (ttb) <span class="no">257-2-33001-9</span></span><button type="button" class="copy" data-copy="2572330019">คัดลอก</button></div>
-          <div class="acct"><span><b>คณะบริหารธุรกิจ</b>ธนาคารกรุงเทพ <span class="no">637-019088-3</span></span><button type="button" class="copy" data-copy="6370190883">คัดลอก</button></div>
+          <div class="acct"><span class="info"><span class="bk gsb">GSB<img src="https://sukonteam.github.io/seminar69/img/gsb.png" alt="" onerror="this.remove()"></span><span><b>คณะนิติศาสตร์</b>ธนาคารออมสิน <span class="no">050-4-0160010-6</span></span></span><button type="button" class="copy" data-copy="050401600106">คัดลอก</button></div>
+          <div class="acct"><span class="info"><span class="bk ttb">TTB<img src="https://sukonteam.github.io/seminar69/img/ttb.png" alt="" onerror="this.remove()"></span><span><b>คณะรัฐศาสตร์</b>ธนาคารทีทีบี (ttb) <span class="no">257-2-33001-9</span></span></span><button type="button" class="copy" data-copy="2572330019">คัดลอก</button></div>
+          <div class="acct"><span class="info"><span class="bk bbl">BBL<img src="https://sukonteam.github.io/seminar69/img/bbl.png" alt="" onerror="this.remove()"></span><span><b>คณะบริหารธุรกิจ</b>ธนาคารกรุงเทพ <span class="no">637-019088-3</span></span></span><button type="button" class="copy" data-copy="6370190883">คัดลอก</button></div>
           <p class="grp">กลุ่ม อ.สุวรรณา</p>
-          <div class="acct"><span><b>ธนาคารกรุงไทย</b><span class="no">731-1-087716</span></span><button type="button" class="copy" data-copy="7311087716">คัดลอก</button></div>
+          <div class="acct"><span class="info"><span class="bk ktb">KTB<img src="https://sukonteam.github.io/seminar69/img/ktb.png" alt="" onerror="this.remove()"></span><span><b>ธนาคารกรุงไทย</b><span class="no">731-1-087716</span></span></span><button type="button" class="copy" data-copy="7311087716">คัดลอก</button></div>
         </div>
 
         <div class="breakdown" id="breakdown"></div>
+
+        <label class="t req" for="payDate">วันที่วางแผนจะชำระเงินค่าสัมมนา</label>
+        <input type="date" id="payDate">
+        <div class="hint" id="payDateTh">เช่น 30 พฤศจิกายน 2569 (ถ้าโอนแล้ว ให้เลือกวันที่โอน)</div>
+
+        <label class="t">แนบสลิปการโอนเงิน <small style="font-weight:400;color:var(--mut)">(ถ้าโอนแล้ว)</small></label>
+        <label class="drop" id="slipDrop">
+          <input type="file" id="slip" accept="image/*,application/pdf">
+          <span class="ic">🧾</span>
+          <span><b>แตะเพื่อเลือกรูปสลิป</b><small>รองรับรูปภาพ หรือ PDF ไม่เกิน 5 MB</small></span>
+        </label>
+        <div class="prev hide" id="slipPrev">
+          <img id="slipImg" alt="" class="hide"><span id="slipPdf" class="hide" style="font-size:36px">📄</span>
+          <span class="nm" id="slipName"></span>
+          <button type="button" id="slipDel">ลบ</button>
+        </div>
 
         <label class="t" for="transfer">ธนาคาร / วันที่-เวลาที่โอน</label>
         <input type="text" id="transfer" maxlength="200" placeholder="เช่น กรุงไทย 20/11/2569 14:30">
@@ -256,6 +288,61 @@
   function val(n) { var r = document.querySelector('input[name="' + n + '"]:checked'); return r ? r.value : ''; }
   function show(id, on) { $(id).classList.toggle('hide', !on); }
   function fmt(n) { return Number(n).toLocaleString('th-TH'); }
+
+  var TH_M = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  function thDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    return m ? (+m[3]) + ' ' + TH_M[+m[2] - 1] + ' ' + (+m[1] + 543) : '';
+  }
+  $('payDate').addEventListener('change', function () {
+    $('payDateTh').textContent = thDate(this.value) ? '📅 ' + thDate(this.value) : 'เช่น 30 พฤศจิกายน 2569 (ถ้าโอนแล้ว ให้เลือกวันที่โอน)';
+  });
+
+  // ---------- สลิป: ย่อรูปก่อนส่ง (ส่งเร็ว ไม่เปลืองเน็ต) ----------
+  var slipData = null;
+  function readSlip(f) {
+    return new Promise(function (resolve, reject) {
+      if (f.type === 'application/pdf') {
+        if (f.size > 5 * 1024 * 1024) return reject(new Error('ไฟล์ PDF ต้องไม่เกิน 5 MB'));
+        var fr = new FileReader();
+        fr.onload = function () { resolve({ type: 'application/pdf', data: String(fr.result).split(',')[1], preview: '' }); };
+        fr.onerror = function () { reject(new Error('อ่านไฟล์ไม่สำเร็จ')); };
+        return fr.readAsDataURL(f);
+      }
+      if (!/^image\//.test(f.type)) return reject(new Error('รองรับเฉพาะรูปภาพ หรือ PDF'));
+      if (f.size > 20 * 1024 * 1024) return reject(new Error('ไฟล์รูปใหญ่เกินไป'));
+      var url = URL.createObjectURL(f), img = new Image();
+      img.onload = function () {
+        var max = 1600, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+        var cv = document.createElement('canvas');
+        cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+        var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+        cx.drawImage(img, 0, 0, cv.width, cv.height);
+        URL.revokeObjectURL(url);
+        var du = cv.toDataURL('image/jpeg', 0.85);
+        resolve({ type: 'image/jpeg', data: du.split(',')[1], preview: du });
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('เปิดรูปนี้ไม่ได้ กรุณาใช้ไฟล์ JPG หรือ PNG')); };
+      img.src = url;
+    });
+  }
+  function clearSlip() {
+    slipData = null; $('slip').value = '';
+    show('slipPrev', false); show('slipDrop', true);
+  }
+  $('slip').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    $('err').textContent = '';
+    readSlip(f).then(function (r) {
+      slipData = { type: r.type, data: r.data };
+      $('slipName').textContent = f.name;
+      if (r.preview) { $('slipImg').src = r.preview; show('slipImg', true); show('slipPdf', false); }
+      else { show('slipImg', false); show('slipPdf', true); }
+      show('slipPrev', true); show('slipDrop', false);
+    }).catch(function (e) { clearSlip(); fail(e.message, $('slipDrop')); });
+  });
+  $('slipDel').addEventListener('click', clearSlip);
 
   $('reportLink').href = WEB_APP_URL + '?page=report';
 
@@ -341,6 +428,7 @@
       return true;
     }
     if (!d.travel) return fail('กรุณาเลือกการเดินทาง', $('travelBox'));
+    if (!thDate(d.payDate)) return fail('กรุณาเลือกวันที่วางแผนจะชำระเงิน', $('payDate'));
     if (d.shirt === 'สั่งซื้อ') {
       if (!d.size) return fail('กรุณาเลือกไซส์เสื้อ', $('size'));
       if (!d.shipping.trim()) return fail('กรุณาระบุข้อมูลสำหรับการจัดส่ง', $('shipping'));
@@ -373,13 +461,15 @@
       attend: val('attend'), reason: $('reason').value, travel: val('travel'),
       followers: followers(), shirt: val('shirt'), size: $('size').value,
       shipping: $('shipping').value, transfer: $('transfer').value,
+      payDate: $('payDate').value,
+      slip: val('attend') === 'เข้าร่วม' ? slipData : null,
       website: $('website').value
     };
     if (!validate(d)) return;
 
     $('err').textContent = '';
     sending = true;
-    $('btn').disabled = true; $('btn').textContent = 'กำลังส่ง…';
+    $('btn').disabled = true; $('btn').textContent = slipData && d.slip ? 'กำลังอัปโหลด…' : 'กำลังส่ง…';
 
     post(d).then(function (r) {
       if (r && r.ok) {
