@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>รายงานสรุปผู้เข้าร่วมสัมมนา</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{--c:#1a56a0;--c2:#2f7bd8;--soft:#eaf2fd;--bg:#f3f6fb;--bd:#dbe3ee;--tx:#1d2733;--mut:#66758a;--ok:#0f7b4b;--err:#c0392b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:'Sarabun','Noto Sans Thai',sans-serif;color:var(--tx)}
+  .wrap{max-width:1280px;margin:0 auto;padding:20px}
+  .card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(20,40,80,.04)}
+  .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  h1{font-size:22px;margin:0;color:var(--c)}
+  .upd{color:var(--mut);font-size:13px}
+
+  .login{max-width:380px;margin:12vh auto;text-align:center}
+  .login .ic{font-size:40px}
+  .login h2{margin:6px 0 4px}
+  input,select{width:100%;padding:11px 14px;font:inherit;font-size:15px;border:1.5px solid var(--bd);border-radius:10px;background:#fff}
+  input:focus,select:focus{outline:none;border-color:var(--c2);box-shadow:0 0 0 3px rgba(47,123,216,.15)}
+  button{border:0;border-radius:10px;padding:11px 18px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .b1{background:linear-gradient(135deg,var(--c),var(--c2));color:#fff}
+  .b2{background:#fff;color:var(--tx);border:1.5px solid var(--bd)}
+  .b3{background:#1e7e34;color:#fff}
+  .err{color:var(--err);font-size:14px;min-height:20px;margin-top:8px}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+  .st{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:14px 16px;border-left:4px solid var(--c)}
+  .st.g{border-left-color:var(--ok)}.st.r{border-left-color:var(--err)}.st.o{border-left-color:#d68a00}
+  .st b{display:block;font-size:26px;line-height:1.2}
+  .st span{color:var(--mut);font-size:13px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .chip{background:var(--soft);color:var(--c);border-radius:99px;padding:2px 10px;font-size:13px;font-weight:600}
+
+  .filters{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:10px;margin-bottom:12px}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  .actions .cnt{margin-left:auto;color:var(--mut);font-size:14px}
+
+  .tw{overflow:auto;max-height:70vh;border:1px solid var(--bd);border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:10px 12px;border-bottom:1px solid #edf1f6;text-align:left;vertical-align:top}
+  th{position:sticky;top:0;background:#f7f9fc;font-weight:700;white-space:nowrap;cursor:pointer;user-select:none;z-index:1}
+  th:hover{color:var(--c)}
+  td{max-width:260px}
+  td.n{text-align:right;white-space:nowrap}
+  td.nw{white-space:nowrap}
+  tbody tr:hover{background:#f6f9fe}
+  .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .pill.y{background:#e3f5ec;color:var(--ok)}.pill.n{background:#fdecea;color:var(--err)}
+  .empty{text-align:center;color:var(--mut);padding:30px}
+  .hide{display:none!important}
+
+  @media (max-width:820px){.filters{grid-template-columns:1fr 1fr}.filters .q{grid-column:1/-1}}
+  @media print{
+    body{background:#fff}.wrap{max-width:none;padding:0}
+    .filters,.actions,.noprint{display:none!important}
+    .card{border:0;box-shadow:none;padding:0}
+    .tw{max-height:none;overflow:visible;border:0}
+    th{position:static}
+    th,td{border:1px solid #999;padding:5px;font-size:11px}
+    @page{size:A4 landscape;margin:1cm}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="loginArea" class="card login">
+    <div class="ic">🔒</div>
+    <h2>รายงานสำหรับเจ้าหน้าที่</h2>
+    <p class="upd">กรุณาใส่รหัสผ่านเพื่อดูข้อมูล</p>
+    <form id="loginForm">
+      <input type="password" id="pw" placeholder="รหัสผ่าน" autocomplete="current-password">
+      <button class="b1" style="width:100%;margin-top:10px" id="loginBtn">เข้าสู่ระบบ</button>
+    </form>
+    <div class="err" id="loginErr"></div>
+  </div>
+
+  <div id="app" class="hide">
+    <div class="top">
+      <div><h1>สรุปข้อมูลผู้ตอบแบบสำรวจสัมมนา</h1><div class="upd" id="upd"></div></div>
+      <div class="noprint" style="display:flex;gap:8px">
+        <button class="b2" id="reloadBtn">🔄 รีเฟรช</button>
+        <button class="b2" id="logoutBtn">ออกจากระบบ</button>
+      </div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <div class="filters">
+        <input class="q" id="q" placeholder="🔎 ค้นหาชื่อ / รหัส / เบอร์โทร">
+        <select id="fFac"><option value="">คณะ: ทั้งหมด</option></select>
+        <select id="fMaj"><option value="">สาขา: ทั้งหมด</option></select>
+        <select id="fCoh"><option value="">รุ่น: ทั้งหมด</option></select>
+        <select id="fSt">
+          <option value="">สถานะ: ทั้งหมด</option>
+          <option value="เข้าร่วม">เข้าร่วม</option>
+          <option value="ไม่สามารถเข้าร่วมได้">ไม่สามารถเข้าร่วมได้</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="b2" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
+        <button class="b3" id="xlsBtn">📊 ดาวน์โหลด Excel</button>
+        <span class="cnt" id="cnt"></span>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var COLS = [
+    ['ประทับเวลา', 'ประทับเวลา', 'nw'],
+    ['ชื่อ-นามสกุล', 'ชื่อ-นามสกุล', 'nw'],
+    ['รหัสนักศึกษา', 'รหัส', 'nw'],
+    ['เบอร์โทรศัพท์', 'เบอร์โทร', 'nw'],
+    ['คณะ', 'คณะ', 'nw'],
+    ['สาขา', 'สาขา', 'nw'],
+    ['รุ่น/ปีการศึกษา', 'รุ่น', 'nw'],
+    ['ความประสงค์', 'สถานะ', 'st'],
+    ['การเดินทาง', 'การเดินทาง', 'nw'],
+    ['จำนวนผู้ติดตาม', 'ผู้ติดตาม', 'n'],
+    ['เสื้อสถาบัน', 'เสื้อ', 'nw'],
+    ['ไซส์เสื้อ', 'ไซส์', 'nw'],
+    ['ยอดที่ต้องชำระ (บาท)', 'ยอด (บาท)', 'n'],
+    ['วันที่วางแผนชำระเงิน', 'นัดชำระ', 'nw'],
+    ['สลิปการโอน', 'สลิป', 'slip'],
+    ['ข้อมูลการโอน', 'ข้อมูลการโอน', ''],
+    ['เหตุผลที่ไม่เข้าร่วม', 'เหตุผล', ''],
+    ['ข้อมูลจัดส่ง', 'ที่อยู่จัดส่งเสื้อ', '']
+  ];
+  // URL ของ Web App (ต้องตรงกับใน index.html)
+  var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyVBgO6JyiW8T-3afDmLqV143ANGXbub-l2ee2O4GOOsxB6S4ILwywefFyhEKzseyk/exec';
+  var raw = [], view = [], sortKey = '', sortDir = 1, pw = '';
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function num(v) { return parseFloat(String(v || '').replace(/,/g, '')) || 0; }
+  function fmt(n) { return Number(n).toLocaleString('th-TH'); }
+  function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
+
+  function load(password, silent) {
+    $('loginBtn').disabled = true; $('loginBtn').textContent = 'กำลังโหลด…';
+    fetchReport(password).then(function (data) {
+        pw = password; ss('rpw', password);
+        raw = data || [];
+        $('loginArea').classList.add('hide'); $('app').classList.remove('hide');
+        $('upd').textContent = 'อัปเดตล่าสุด ' + new Date().toLocaleString('th-TH');
+        buildFilters(); apply();
+      }).catch(function (e) {
+        ss('rpw', null);
+        $('loginArea').classList.remove('hide'); $('app').classList.add('hide');
+        $('loginErr').textContent = silent ? '' : (e.message || 'โหลดข้อมูลไม่สำเร็จ');
+        $('loginBtn').disabled = false; $('loginBtn').textContent = 'เข้าสู่ระบบ';
+      });
+  }
+
+  // เปิดใน Apps Script ใช้ google.script.run / เปิดบน GitHub Pages ใช้ fetch
+  function fetchReport(password) {
+    if (window.google && google.script && google.script.run) {
+      return new Promise(function (res, rej) {
+        google.script.run.withSuccessHandler(res).withFailureHandler(rej).getReportData(password);
+      });
+    }
+    return fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'report', password: password }) })
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r || !r.ok) throw new Error((r && r.error) || 'โหลดข้อมูลไม่สำเร็จ');
+        return r.data;
+      }, function () { throw new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ กรุณาลองใหม่'); });
+  }
+
+  function fillSel(id, label, items) {
+    var sel = $(id), cur = sel.value;
+    sel.innerHTML = '';
+    var o = document.createElement('option'); o.value = ''; o.textContent = label + ': ทั้งหมด'; sel.appendChild(o);
+    items.sort().forEach(function (v) { var x = document.createElement('option'); x.value = v; x.textContent = v; sel.appendChild(x); });
+    if (items.indexOf(cur) > -1) sel.value = cur;
+  }
+  function uniq(k) { return raw.map(function (d) { return d[k]; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; }); }
+  function buildFilters() {
+    fillSel('fFac', 'คณะ', uniq('คณะ'));
+    fillSel('fMaj', 'สาขา', uniq('สาขา'));
+    fillSel('fCoh', 'รุ่น', uniq('รุ่น/ปีการศึกษา'));
+  }
+
+  function apply() {
+    var q = $('q').value.trim().toLowerCase(), f = $('fFac').value, m = $('fMaj').value, c = $('fCoh').value, s = $('fSt').value;
+    view = raw.filter(function (d) {
+      if (f && d['คณะ'] !== f) return false;
+      if (m && d['สาขา'] !== m) return false;
+      if (c && d['รุ่น/ปีการศึกษา'] !== c) return false;
+      if (s && d['ความประสงค์'] !== s) return false;
+      if (q && (d['ชื่อ-นามสกุล'] + ' ' + d['รหัสนักศึกษา'] + ' ' + d['เบอร์โทรศัพท์']).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    if (sortKey) {
+      var isNum = sortKey === 'จำนวนผู้ติดตาม' || sortKey === 'ยอดที่ต้องชำระ (บาท)';
+      view.sort(function (a, b) {
+        var x = a[sortKey] || '', y = b[sortKey] || '';
+        return (isNum ? num(x) - num(y) : String(x).localeCompare(String(y), 'th')) * sortDir;
+      });
+    }
+    renderHead(); renderTable(); renderStats();
+  }
+
+  function renderHead() {
+    $('thead').innerHTML = '<th>#</th>' + COLS.map(function (c) {
+      var arrow = sortKey === c[0] ? (sortDir > 0 ? ' ▲' : ' ▼') : '';
+      return '<th data-k="' + esc(c[0]) + '">' + esc(c[1]) + arrow + '</th>';
+    }).join('');
+  }
+
+  function renderTable() {
+    $('cnt').textContent = 'แสดง ' + view.length + ' จาก ' + raw.length + ' รายการ';
+    if (!view.length) { $('tbody').innerHTML = '<tr><td colspan="' + (COLS.length + 1) + '" class="empty">ไม่พบข้อมูล</td></tr>'; return; }
+    $('tbody').innerHTML = view.map(function (d, i) {
+      return '<tr><td class="n">' + (i + 1) + '</td>' + COLS.map(function (c) {
+        var v = d[c[0]];
+        if (c[2] === 'st') return '<td><span class="pill ' + (v === 'เข้าร่วม' ? 'y' : 'n') + '">' + esc(v) + '</span></td>';
+        if (c[2] === 'slip') return '<td class="nw">' + (/^https:\/\/drive\.google\.com\//.test(v || '')
+          ? '<a href="' + esc(v) + '" target="_blank" rel="noopener">🧾 ดูสลิป</a>' : '<span style="color:#b3bccb">-</span>') + '</td>';
+        if (c[0] === 'ยอดที่ต้องชำระ (บาท)') v = fmt(num(v));
+        return '<td class="' + c[2] + '">' + (v === '' || v == null ? '<span style="color:#b3bccb">-</span>' : esc(v)) + '</td>';
+      }).join('') + '</tr>';
+    }).join('');
+  }
+
+  function renderStats() {
+    var att = view.filter(function (d) { return d['ความประสงค์'] === 'เข้าร่วม'; });
+    var fol = att.reduce(function (s, d) { return s + num(d['จำนวนผู้ติดตาม']); }, 0);
+    var money = att.reduce(function (s, d) { return s + num(d['ยอดที่ต้องชำระ (บาท)']); }, 0);
+    var van = att.filter(function (d) { return d['การเดินทาง'] === 'รถตู้ที่จัดให้'; }).length;
+    var sizes = {};
+    att.forEach(function (d) { if (d['ไซส์เสื้อ']) sizes[d['ไซส์เสื้อ']] = (sizes[d['ไซส์เสื้อ']] || 0) + 1; });
+    var order = ['SS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+    var shirtN = Object.keys(sizes).reduce(function (s, k) { return s + sizes[k]; }, 0);
+    var chips = order.filter(function (k) { return sizes[k]; }).map(function (k) { return '<span class="chip">' + k + ' × ' + sizes[k] + '</span>'; }).join('');
+
+    $('stats').innerHTML =
+      '<div class="st"><b>' + view.length + '</b><span>ตอบกลับทั้งหมด</span></div>' +
+      '<div class="st g"><b>' + att.length + '</b><span>เข้าร่วม</span></div>' +
+      '<div class="st r"><b>' + (view.length - att.length) + '</b><span>ไม่เข้าร่วม</span></div>' +
+      '<div class="st"><b>' + (att.length + fol) + '</b><span>ผู้ร่วมงานรวม (ผู้ติดตาม ' + fol + ')</span></div>' +
+      '<div class="st"><b>' + van + '</b><span>นั่งรถตู้</span></div>' +
+      '<div class="st g"><b>' + att.filter(function (d) { return d['สลิปการโอน']; }).length + ' / ' + att.length + '</b><span>แนบสลิปแล้ว</span></div>' +
+      '<div class="st o"><b>' + fmt(money) + '</b><span>ยอดชำระรวม (บาท)</span></div>' +
+      '<div class="st o"><b>' + shirtN + '</b><span>สั่งเสื้อ</span>' + (chips ? '<div class="chips">' + chips + '</div>' : '') + '</div>';
+  }
+
+  function exportExcel() {
+    var rows = view.map(function (d, i) {
+      var o = { 'ลำดับ': i + 1 };
+      COLS.forEach(function (c) {
+        var v = d[c[0]];
+        o[c[1]] = (c[2] === 'n') ? num(v) : (v || '');
+      });
+      return o;
+    });
+    var ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [{ wch: 6 }].concat(COLS.map(function (c) { return { wch: c[2] === '' ? 30 : 16 }; }));
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'รายงาน');
+    XLSX.writeFile(wb, 'รายงานผู้เข้าร่วมสัมมนา_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  }
+
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault(); $('loginErr').textContent = '';
+    var v = $('pw').value; if (!v) { $('loginErr').textContent = 'กรุณาใส่รหัสผ่าน'; return; }
+    load(v);
+  });
+  $('reloadBtn').addEventListener('click', function () { load(pw); });
+  $('logoutBtn').addEventListener('click', function () { ss('rpw', null); pw = ''; raw = []; location.reload(); });
+  $('xlsBtn').addEventListener('click', exportExcel);
+  ['q', 'fFac', 'fMaj', 'fCoh', 'fSt'].forEach(function (id) { $(id).addEventListener('input', apply); $(id).addEventListener('change', apply); });
+  $('thead').addEventListener('click', function (e) {
+    var k = e.target.closest('th') && e.target.closest('th').dataset.k; if (!k) return;
+    if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = 1; }
+    apply();
+  });
+
+  var saved = ss('rpw');
+  if (saved) load(saved, true);
+</script>
+</body>
+</html>
