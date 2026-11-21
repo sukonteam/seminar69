@@ -107,21 +107,33 @@
     .grid2{grid-template-columns:1fr}.choices.cols3{grid-template-columns:1fr}
     .btn{min-width:0;padding:14px 18px}.bar .amt b{font-size:20px}
   }
+  .bk.kbank{background:#138F2D}.bk.scb{background:#4E2A84}.bk.bay{background:#D4A106}.bk.kkp{background:#594F9F}.bk.other{background:#64748B}
+  .loading{text-align:center;padding:48px 20px;color:var(--mut)}
+  .spin{width:34px;height:34px;border:3px solid var(--soft);border-top-color:var(--c);border-radius:50%;margin:0 auto 12px;animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <form id="formArea" novalidate autocomplete="on">
+  <div id="loading" class="card loading"><div class="spin"></div>กำลังโหลดแบบฟอร์ม…</div>
+
+  <div id="closedArea" class="card done hide">
+    <div class="ic" style="background:#fdecea;color:var(--err)">!</div>
+    <h2 id="closedTitle">ปิดรับแบบสำรวจแล้ว</h2>
+    <p class="sub" id="closedMsg"></p>
+  </div>
+
+  <form id="formArea" class="hide" novalidate autocomplete="on">
     <div class="hero">
-      <span class="badge">กิจกรรมบังคับ</span>
-      <h1>แบบสำรวจการเข้าร่วมกิจกรรมสัมมนาวิชาการ<br>มหาวิทยาลัยปทุมธานี</h1>
+      <span class="badge" id="hBadge"></span>
+      <h1 id="hTitle"></h1>
       <p>กรุณากรอกข้อมูลให้ครบถ้วน ช่องที่มี <span style="color:#ffd2cc">*</span> จำเป็นต้องกรอก</p>
     </div>
 
     <div class="hp" aria-hidden="true"><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
 
-    <section class="card">
-      <h2><span class="num">1</span>ข้อมูลส่วนตัว</h2>
+    <section class="card sec">
+      <h2><span class="num"></span>ข้อมูลส่วนตัว</h2>
       <label class="t req" for="name">ชื่อ - นามสกุล</label>
       <input type="text" id="name" maxlength="150" autocomplete="name">
       <div class="grid2">
@@ -136,11 +148,7 @@
       </div>
 
       <label class="t req">คณะ</label>
-      <div class="choices cols3" id="facultyBox">
-        <label class="chip"><input type="radio" name="faculty" value="นิติศาสตร์"><span class="dot"></span>นิติศาสตร์</label>
-        <label class="chip"><input type="radio" name="faculty" value="รัฐศาสตร์"><span class="dot"></span>รัฐศาสตร์</label>
-        <label class="chip"><input type="radio" name="faculty" value="บริหารธุรกิจ"><span class="dot"></span>บริหารธุรกิจ</label>
-      </div>
+      <div class="choices cols3" id="facultyBox"></div>
 
       <div class="grid2">
         <div>
@@ -149,19 +157,14 @@
         </div>
         <div>
           <label class="t req" for="cohort">รุ่น / ปีการศึกษา</label>
-          <select id="cohort">
-            <option value="">-- เลือกรุ่น/ปีการศึกษา --</option>
-            <option>1/2567</option><option>2/2567</option>
-            <option>1/2568</option><option>2/2568</option>
-            <option>1/2569</option><option>2/2569</option>
-          </select>
+          <select id="cohort"></select>
         </div>
       </div>
     </section>
 
-    <section class="card">
-      <h2><span class="num">2</span>ความประสงค์ในการเข้าร่วมกิจกรรม</h2>
-      <p class="sub">เป็นกิจกรรมบังคับ</p>
+    <section class="card sec">
+      <h2><span class="num"></span>ความประสงค์ในการเข้าร่วมกิจกรรม</h2>
+      <p class="sub" id="attendSub"></p>
       <div class="choices" id="attendBox">
         <label class="chip"><input type="radio" name="attend" value="เข้าร่วม"><span class="dot"></span>เข้าร่วม</label>
         <label class="chip"><input type="radio" name="attend" value="ไม่สามารถเข้าร่วมได้"><span class="dot"></span>ไม่สามารถเข้าร่วมได้</label>
@@ -173,80 +176,69 @@
     </section>
 
     <div id="attendArea" class="hide reveal">
-      <section class="card">
-        <h2><span class="num">3</span>การเดินทาง</h2>
-        <p class="sub">กำหนดถึงโรงแรมเวลา 09.00 - 10.00 น.</p>
-        <div class="choices" id="travelBox">
-          <label class="chip"><input type="radio" name="travel" value="รถตู้ที่จัดให้"><span class="dot"></span>
-            <span>เดินทางโดยรถตู้ที่จัดให้<small>ขึ้นรถที่โรงเรียนวัดไผ่ล้อม จ.นครปฐม เวลา 06.30 น.</small></span></label>
-          <label class="chip"><input type="radio" name="travel" value="เดินทางไปเอง"><span class="dot"></span>เดินทางไปเอง</label>
-        </div>
+      <section class="card sec" id="secTravel">
+        <h2><span class="num"></span>การเดินทาง</h2>
+        <p class="sub" id="travelNote"></p>
+        <div class="choices" id="travelBox"></div>
       </section>
 
-      <section class="card">
-        <h2><span class="num">4</span>ผู้ติดตาม (ถ้ามี)</h2>
+      <section class="card sec" id="secFollowers">
+        <h2><span class="num"></span>ผู้ติดตาม (ถ้ามี)</h2>
         <div class="choices">
           <label class="chip"><input type="radio" name="hasF" value="no" checked><span class="dot"></span>ไม่มีผู้ติดตาม</label>
           <label class="chip"><input type="radio" name="hasF" value="yes"><span class="dot"></span>
-            <span>มีผู้ติดตาม<small>ค่าใช้จ่าย 1,500 บาท/คน สำหรับเข้าร่วมกิจกรรมและอาหาร</small></span></label>
+            <span>มีผู้ติดตาม<small id="fNote"></small></span></label>
         </div>
         <div id="fBox" class="hide reveal">
           <label class="t" for="followers">จำนวนผู้ติดตาม (คน)</label>
           <div class="stepper">
             <button type="button" data-step="-1" aria-label="ลด">−</button>
-            <input type="number" id="followers" min="1" max="10" value="1" inputmode="numeric">
+            <input type="number" id="followers" min="1" value="1" inputmode="numeric">
             <button type="button" data-step="1" aria-label="เพิ่ม">+</button>
           </div>
         </div>
       </section>
 
-      <section class="card">
-        <h2><span class="num">5</span>เสื้อสถาบัน</h2>
-        <p class="sub">สำหรับใส่ในวันเสาร์ที่ 19 ธันวาคม 2569</p>
+      <section class="card sec" id="secShirt">
+        <h2><span class="num"></span>เสื้อสถาบัน</h2>
+        <p class="sub" id="shirtNote"></p>
         <div class="choices">
           <label class="chip"><input type="radio" name="shirt" value="มีแล้ว" checked><span class="dot"></span>มีเสื้อสถาบันแล้ว</label>
-          <label class="chip"><input type="radio" name="shirt" value="สั่งซื้อ"><span class="dot"></span>ต้องการสั่งซื้อ ราคาตัวละ 250 บาท</label>
+          <label class="chip"><input type="radio" name="shirt" value="สั่งซื้อ"><span class="dot"></span><span id="shirtBuy"></span></label>
         </div>
         <div id="shirtBox" class="hide reveal">
           <label class="t req" for="size">Size เสื้อ</label>
-          <select id="size">
-            <option value="">-- เลือกไซส์ --</option>
-            <option>SS</option><option>S</option><option>M</option><option>L</option>
-            <option>XL</option><option>XXL</option><option>XXXL</option>
-          </select>
+          <select id="size"></select>
           <label class="t req" for="shipping">ข้อมูลสำหรับการจัดส่ง (ชื่อ-ที่อยู่ เบอร์โทรศัพท์)</label>
           <textarea id="shipping" maxlength="500"></textarea>
         </div>
       </section>
 
-      <section class="card">
-        <h2><span class="num">6</span>ข้อมูลการชำระเงินค่าสัมมนา</h2>
-        <p class="sub">ค่าใช้จ่าย: นักศึกษา 3,200 บาท / ผู้ติดตาม 1,500 บาท</p>
-        <div class="bank">
-          <p class="grp">กลุ่ม อ.ดร.สุคนธ์ บุญมาก</p>
-          <div class="acct"><span class="info"><span class="bk gsb">GSB<img src="https://sukonteam.github.io/seminar69/img/gsb.png" alt="" onerror="this.remove()"></span><span><b>คณะนิติศาสตร์</b>ธนาคารออมสิน <span class="no">050-4-0160010-6</span></span></span><button type="button" class="copy" data-copy="050401600106">คัดลอก</button></div>
-          <div class="acct"><span class="info"><span class="bk ttb">TTB<img src="https://sukonteam.github.io/seminar69/img/ttb.png" alt="" onerror="this.remove()"></span><span><b>คณะรัฐศาสตร์</b>ธนาคารทีทีบี (ttb) <span class="no">457-2-33001-9</span></span></span><button type="button" class="copy" data-copy="4572330019">คัดลอก</button></div>
-          <div class="acct"><span class="info"><span class="bk bbl">BBL<img src="https://sukonteam.github.io/seminar69/img/bbl.png" alt="" onerror="this.remove()"></span><span><b>คณะบริหารธุรกิจ</b>ธนาคารกรุงเทพ <span class="no">637-019088-3</span></span></span><button type="button" class="copy" data-copy="6370190883">คัดลอก</button></div>
-          <p class="grp">กลุ่ม อ.สุวรรณา</p>
-          <div class="acct"><span class="info"><span class="bk ktb">KTB<img src="https://sukonteam.github.io/seminar69/img/ktb.png" alt="" onerror="this.remove()"></span><span><b>ธนาคารกรุงไทย</b><span class="no">731-1-087716</span></span></span><button type="button" class="copy" data-copy="7311087716">คัดลอก</button></div>
-        </div>
+      <section class="card sec" id="secPay">
+        <h2><span class="num"></span>ข้อมูลการชำระเงิน</h2>
+        <p class="sub" id="feeText"></p>
+        <div class="bank" id="bankList"></div>
 
         <div class="breakdown" id="breakdown"></div>
 
-        <label class="t req" for="payDate">วันที่วางแผนจะชำระเงินค่าสัมมนา</label>
-        <input type="date" id="payDate">
-        <div class="hint" id="payDateTh">เช่น 30 พฤศจิกายน 2569 (ถ้าโอนแล้ว ให้เลือกวันที่โอน)</div>
+        <div id="payDateWrap">
+          <label class="t req" for="payDate">วันที่วางแผนจะชำระเงิน</label>
+          <input type="date" id="payDate">
+          <div class="hint" id="payDateTh">เช่น 30 พฤศจิกายน 2569 (ถ้าโอนแล้ว ให้เลือกวันที่โอน)</div>
+        </div>
 
-        <label class="t">แนบสลิปการโอนเงิน <small style="font-weight:400;color:var(--mut)">(ถ้าโอนแล้ว)</small></label>
-        <label class="drop" id="slipDrop">
-          <input type="file" id="slip" accept="image/*,application/pdf">
-          <span class="ic">🧾</span>
-          <span><b>แตะเพื่อเลือกรูปสลิป</b><small>รองรับรูปภาพ หรือ PDF ไม่เกิน 5 MB</small></span>
-        </label>
-        <div class="prev hide" id="slipPrev">
-          <img id="slipImg" alt="" class="hide"><span id="slipPdf" class="hide" style="font-size:36px">📄</span>
-          <span class="nm" id="slipName"></span>
-          <button type="button" id="slipDel">ลบ</button>
+        <div id="slipWrap">
+          <label class="t">แนบสลิปการโอนเงิน <small style="font-weight:400;color:var(--mut)">(ถ้าโอนแล้ว)</small></label>
+          <label class="drop" id="slipDrop">
+            <input type="file" id="slip" accept="image/*,application/pdf">
+            <span class="ic">🧾</span>
+            <span><b>แตะเพื่อเลือกรูปสลิป</b><small>รองรับรูปภาพ หรือ PDF ไม่เกิน 5 MB</small></span>
+          </label>
+          <div class="prev hide" id="slipPrev">
+            <img id="slipImg" alt="" class="hide"><span id="slipPdf" class="hide" style="font-size:36px">📄</span>
+            <span class="nm" id="slipName"></span>
+            <button type="button" id="slipDel">ลบ</button>
+          </div>
         </div>
 
         <label class="t" for="transfer">ธนาคาร / วันที่-เวลาที่โอน</label>
@@ -266,9 +258,9 @@
   </div>
 </div>
 
-<div class="bar" id="bar">
+<div class="bar hide" id="bar">
   <div class="bar-in">
-    <div class="amt"><small id="barLabel">ยอดที่ต้องชำระ</small><b id="total">3,200 บาท</b></div>
+    <div class="amt"><small id="barLabel">ยอดที่ต้องชำระ</small><b id="total"></b></div>
     <button class="btn" id="btn" type="button">ส่งแบบสำรวจ</button>
   </div>
 </div>
@@ -276,18 +268,145 @@
 <script>
   // URL ของ Web App (Deploy > จัดการการทำให้ใช้งานได้ > คัด URL ที่ลงท้าย /exec)
   var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyVBgO6JyiW8T-3afDmLqV143ANGXbub-l2ee2O4GOOsxB6S4ILwywefFyhEKzseyk/exec';
+  var SITE = 'https://sukonteam.github.io/seminar69/';
 
-  var FEE = { student: 3200, follower: 1500, shirt: 250 }, MAX_F = 10;
-  var MAJORS = {
-    'นิติศาสตร์': ['นิติศาสตร์'],
-    'รัฐศาสตร์': ['รัฐศาสตร์', 'รัฐประศาสนศาสตร์'],
-    'บริหารธุรกิจ': ['คอมพิวเตอร์', 'บัญชี', 'การจัดการ']
-  };
-
+  var CFG = null, EV = '', touched = false;
+  ['input', 'change'].forEach(function (t) { document.addEventListener(t, function () { touched = true; }, true); });
   var $ = function (id) { return document.getElementById(id); };
+  var inGas = !!(window.google && google.script && google.script.run);
   function val(n) { var r = document.querySelector('input[name="' + n + '"]:checked'); return r ? r.value : ''; }
   function show(id, on) { $(id).classList.toggle('hide', !on); }
   function fmt(n) { return Number(n).toLocaleString('th-TH'); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+
+  // ---------- โหลดค่าตั้งค่ากิจกรรม ----------
+  function getEventId(cb) {
+    if (inGas && google.script.url) return google.script.url.getLocation(function (l) { cb((l.parameter && l.parameter.e) || ''); });
+    cb(new URLSearchParams(location.search).get('e') || '');
+  }
+  function api(action, data) {
+    if (inGas) {
+      return new Promise(function (res, rej) {
+        var r = google.script.run.withSuccessHandler(res).withFailureHandler(rej);
+        if (action === 'config') r.getPublicConfig(data.e);
+      });
+    }
+    data.action = action;
+    return fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(data) })
+      .then(function (r) { return r.json(); })
+      .then(function (r) { if (!r.ok) throw new Error(r.error || 'โหลดไม่สำเร็จ'); return r.event; });
+  }
+
+  getEventId(function (e) {
+    EV = e;
+    var key = 'evcfg_' + (e || 'default'), cached = store(key);
+    if (cached) { try { render(JSON.parse(cached)); } catch (x) { cached = null; } }
+    api('config', { e: e }).then(function (cfg) {
+      store(key, JSON.stringify(cfg));
+      // มีค่าใหม่จากหลังบ้าน: วาดใหม่ถ้ายังไม่เริ่มกรอก หรือถ้ากิจกรรมถูกปิดรับ
+      if (!CFG || (!touched && JSON.stringify(cfg) !== JSON.stringify(CFG)) || (!cfg.open && CFG.open)) render(cfg);
+    }).catch(function (err) {
+      if (CFG) return;
+      $('loading').innerHTML = '';
+      $('loading').appendChild(el('div', '', '⚠️ ' + (err.message || 'โหลดแบบฟอร์มไม่สำเร็จ')));
+      $('loading').appendChild(el('div', 'sub', 'กรุณาตรวจสอบอินเทอร์เน็ต แล้วรีเฟรชหน้านี้'));
+    });
+  });
+
+  // ---------- วาดฟอร์มตามค่าตั้งค่า ----------
+  function render(cfg) {
+    CFG = cfg;
+    var S = cfg.sections || {}, F = cfg.fees || {};
+    document.title = cfg.title || document.title;
+    show('loading', false);
+    $('reportLink').href = SITE + 'report.html' + (cfg.id ? '?e=' + encodeURIComponent(cfg.id) : '');
+
+    if (!cfg.open) {
+      show('formArea', false); show('bar', false); show('closedArea', true);
+      $('closedTitle').textContent = cfg.status === 'draft' ? 'ยังไม่เปิดรับแบบสำรวจ' : 'ปิดรับแบบสำรวจแล้ว';
+      $('closedMsg').textContent = (cfg.title || '') + (cfg.org ? ' ' + cfg.org : '');
+      return;
+    }
+    show('closedArea', false); show('formArea', true); show('bar', true);
+
+    $('hBadge').textContent = cfg.badge || ''; show('hBadge', !!cfg.badge);
+    $('hTitle').textContent = cfg.title || '';
+    if (cfg.org) { $('hTitle').appendChild(document.createElement('br')); $('hTitle').appendChild(document.createTextNode(cfg.org)); }
+    $('attendSub').textContent = cfg.badge === 'กิจกรรมบังคับ' ? 'เป็นกิจกรรมบังคับ' : (cfg.dateText || '');
+
+    // คณะ
+    var fb = $('facultyBox'); fb.innerHTML = '';
+    Object.keys(cfg.faculties || {}).forEach(function (f) {
+      var lb = el('label', 'chip'), inp = el('input'); inp.type = 'radio'; inp.name = 'faculty'; inp.value = f;
+      inp.addEventListener('change', updateMajor);
+      lb.appendChild(inp); lb.appendChild(el('span', 'dot')); lb.appendChild(document.createTextNode(f)); fb.appendChild(lb);
+    });
+    updateMajor();
+    // รุ่น
+    var co = $('cohort'); co.innerHTML = '';
+    var o0 = el('option', '', '-- เลือกรุ่น/ปีการศึกษา --'); o0.value = ''; co.appendChild(o0);
+    (cfg.cohorts || []).forEach(function (c) { var o = el('option', '', c); o.value = c; co.appendChild(o); });
+
+    // การเดินทาง
+    show('secTravel', !!S.travel);
+    $('travelNote').textContent = (cfg.travel && cfg.travel.note) || ''; show('travelNote', !!(cfg.travel && cfg.travel.note));
+    var tb = $('travelBox'); tb.innerHTML = '';
+    ((cfg.travel && cfg.travel.options) || []).forEach(function (t) {
+      var lb = el('label', 'chip'), inp = el('input'); inp.type = 'radio'; inp.name = 'travel'; inp.value = t.value;
+      lb.appendChild(inp); lb.appendChild(el('span', 'dot'));
+      var sp = el('span', '', t.label || t.value); if (t.sub) sp.appendChild(el('small', '', t.sub));
+      lb.appendChild(sp); tb.appendChild(lb);
+    });
+
+    // ผู้ติดตาม
+    show('secFollowers', !!S.followers);
+    $('fNote').textContent = 'ค่าใช้จ่าย ' + fmt(F.follower || 0) + ' บาท/คน สำหรับเข้าร่วมกิจกรรมและอาหาร';
+    $('followers').max = F.maxFollowers || 10;
+
+    // เสื้อ
+    show('secShirt', !!S.shirt);
+    $('shirtNote').textContent = (cfg.shirt && cfg.shirt.note) || ''; show('shirtNote', !!(cfg.shirt && cfg.shirt.note));
+    $('shirtBuy').textContent = +F.shirt ? 'ต้องการสั่งซื้อ ราคาตัวละ ' + fmt(F.shirt) + ' บาท' : 'ขอรับเสื้อสถาบัน (ไม่มีค่าใช้จ่าย)';
+    var sz = $('size'); sz.innerHTML = '';
+    var s0 = el('option', '', '-- เลือกไซส์ --'); s0.value = ''; sz.appendChild(s0);
+    ((cfg.shirt && cfg.shirt.sizes) || []).forEach(function (z) { var o = el('option', '', z); o.value = z; sz.appendChild(o); });
+
+    // ชำระเงิน
+    show('secPay', !!S.payment);
+    show('payDateWrap', !!S.payDate); show('slipWrap', !!S.slip);
+    $('feeText').textContent = 'ค่าใช้จ่าย: นักศึกษา ' + fmt(F.student || 0) + ' บาท' +
+      (S.followers ? ' / ผู้ติดตาม ' + fmt(F.follower || 0) + ' บาท' : '');
+    renderBanks(cfg.banks || []);
+
+    // เลขหัวข้อ
+    var n = 0;
+    document.querySelectorAll('section.sec').forEach(function (s) {
+      if (!s.classList.contains('hide')) s.querySelector('.num').textContent = ++n;
+    });
+    refresh();
+  }
+
+  function renderBanks(banks) {
+    var box = $('bankList'), lastGroup = null; box.innerHTML = '';
+    banks.forEach(function (b) {
+      if (b.group && b.group !== lastGroup) { box.appendChild(el('p', 'grp', b.group)); lastGroup = b.group; }
+      var row = el('div', 'acct'), info = el('span', 'info');
+      var code = /^[a-z]{2,6}$/.test(b.code || '') ? b.code : 'other';
+      var bk = el('span', 'bk ' + code, code === 'other' ? '฿' : code.toUpperCase());
+      var img = el('img'); img.alt = ''; img.src = SITE + 'img/' + code + '.png'; img.onerror = function () { this.remove(); };
+      bk.appendChild(img); info.appendChild(bk);
+      var tx = el('span'); tx.appendChild(el('b', '', b.title || b.bank));
+      if (b.title && b.bank) tx.appendChild(document.createTextNode(b.bank + ' '));
+      tx.appendChild(el('span', 'no', b.no)); info.appendChild(tx); row.appendChild(info);
+      var btn = el('button', 'copy', 'คัดลอก'); btn.type = 'button'; btn.dataset.copy = String(b.no).replace(/\D/g, '');
+      btn.addEventListener('click', function () {
+        var done = function () { btn.textContent = 'คัดลอกแล้ว ✓'; setTimeout(function () { btn.textContent = 'คัดลอก'; }, 1500); };
+        try { navigator.clipboard.writeText(btn.dataset.copy).then(done, done); } catch (e) { done(); }
+      });
+      row.appendChild(btn); box.appendChild(row);
+    });
+  }
 
   var TH_M = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
   function thDate(iso) {
@@ -298,7 +417,7 @@
     $('payDateTh').textContent = thDate(this.value) ? '📅 ' + thDate(this.value) : 'เช่น 30 พฤศจิกายน 2569 (ถ้าโอนแล้ว ให้เลือกวันที่โอน)';
   });
 
-  // ---------- สลิป: ย่อรูปก่อนส่ง (ส่งเร็ว ไม่เปลืองเน็ต) ----------
+  // ---------- สลิป: ย่อรูปก่อนส่ง ----------
   var slipData = null;
   function readSlip(f) {
     return new Promise(function (resolve, reject) {
@@ -326,10 +445,7 @@
       img.src = url;
     });
   }
-  function clearSlip() {
-    slipData = null; $('slip').value = '';
-    show('slipPrev', false); show('slipDrop', true);
-  }
+  function clearSlip() { slipData = null; $('slip').value = ''; show('slipPrev', false); show('slipDrop', true); }
   $('slip').addEventListener('change', function () {
     var f = this.files && this.files[0];
     if (!f) return;
@@ -344,40 +460,34 @@
   });
   $('slipDel').addEventListener('click', clearSlip);
 
-  $('reportLink').href = 'https://sukonteam.github.io/seminar69/report.html';
-
+  // ---------- คำนวณ / แสดงผล ----------
   function updateMajor() {
-    var f = val('faculty'), sel = $('major'), cur = sel.value;
+    var f = val('faculty'), sel = $('major'), cur = sel.value, list = (CFG && CFG.faculties[f]) || [];
     sel.innerHTML = '';
-    var first = document.createElement('option');
-    first.value = ''; first.textContent = f ? '-- โปรดเลือกสาขา --' : '-- โปรดเลือกคณะก่อน --';
-    sel.appendChild(first);
-    (MAJORS[f] || []).forEach(function (m) {
-      var o = document.createElement('option'); o.value = m; o.textContent = m; sel.appendChild(o);
-    });
+    var first = el('option', '', f ? '-- โปรดเลือกสาขา --' : '-- โปรดเลือกคณะก่อน --'); first.value = ''; sel.appendChild(first);
+    list.forEach(function (m) { var o = el('option', '', m); o.value = m; sel.appendChild(o); });
     sel.disabled = !f;
-    if ((MAJORS[f] || []).indexOf(cur) > -1) sel.value = cur;
-    else if ((MAJORS[f] || []).length === 1) sel.value = MAJORS[f][0];
+    if (list.indexOf(cur) > -1) sel.value = cur; else if (list.length === 1) sel.value = list[0];
   }
-
   function followers() {
-    if (val('hasF') !== 'yes') return 0;
-    var n = Math.min(MAX_F, Math.max(1, parseInt($('followers').value, 10) || 1));
-    return n;
+    if (!CFG || !CFG.sections.followers || val('hasF') !== 'yes') return 0;
+    var max = CFG.fees.maxFollowers || 10;
+    return Math.min(max, Math.max(1, parseInt($('followers').value, 10) || 1));
   }
-
   function refresh() {
+    if (!CFG) return;
+    var S = CFG.sections, F = CFG.fees;
     var attend = val('attend'), attending = attend === 'เข้าร่วม';
     show('reasonBox', attend === 'ไม่สามารถเข้าร่วมได้');
     show('attendArea', attending);
     show('fBox', val('hasF') === 'yes');
-    show('shirtBox', val('shirt') === 'สั่งซื้อ');
+    show('shirtBox', S.shirt && val('shirt') === 'สั่งซื้อ');
 
-    var f = followers(), shirt = val('shirt') === 'สั่งซื้อ';
-    var t = FEE.student + f * FEE.follower + (shirt ? FEE.shirt : 0);
-    var html = '<div><span>นักศึกษา 1 คน</span><span>' + fmt(FEE.student) + '</span></div>';
-    if (f) html += '<div><span>ผู้ติดตาม ' + f + ' คน × 1,500</span><span>' + fmt(f * FEE.follower) + '</span></div>';
-    if (shirt) html += '<div><span>เสื้อสถาบัน 1 ตัว</span><span>' + fmt(FEE.shirt) + '</span></div>';
+    var f = followers(), shirt = S.shirt && val('shirt') === 'สั่งซื้อ';
+    var t = (+F.student || 0) + f * (+F.follower || 0) + (shirt ? (+F.shirt || 0) : 0);
+    var html = '<div><span>นักศึกษา 1 คน</span><span>' + fmt(F.student || 0) + '</span></div>';
+    if (f) html += '<div><span>ผู้ติดตาม ' + f + ' คน × ' + fmt(F.follower) + '</span><span>' + fmt(f * F.follower) + '</span></div>';
+    if (shirt) html += '<div><span>เสื้อสถาบัน 1 ตัว</span><span>' + (+F.shirt ? fmt(F.shirt) : 'ฟรี') + '</span></div>';
     html += '<div class="sum"><span>รวมทั้งสิ้น</span><span>' + fmt(t) + ' บาท</span></div>';
     $('breakdown').innerHTML = html;
 
@@ -385,37 +495,29 @@
     else { $('barLabel').textContent = 'ยอดที่ต้องชำระ'; $('total').textContent = fmt(t) + ' บาท'; }
   }
 
-  document.querySelectorAll('input[name="faculty"]').forEach(function (r) { r.addEventListener('change', updateMajor); });
   document.addEventListener('change', refresh);
-  document.addEventListener('input', function (e) {
-    if (e.target.classList) e.target.classList.remove('invalid');
-    refresh();
-  });
+  document.addEventListener('input', function (e) { if (e.target.classList) e.target.classList.remove('invalid'); refresh(); });
   document.querySelectorAll('[data-step]').forEach(function (b) {
     b.addEventListener('click', function () {
+      var max = (CFG && CFG.fees.maxFollowers) || 10;
       var n = (parseInt($('followers').value, 10) || 1) + parseInt(b.dataset.step, 10);
-      $('followers').value = Math.min(MAX_F, Math.max(1, n));
+      $('followers').value = Math.min(max, Math.max(1, n));
       refresh();
     });
   });
-  document.querySelectorAll('[data-copy]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      var done = function () { b.textContent = 'คัดลอกแล้ว ✓'; setTimeout(function () { b.textContent = 'คัดลอก'; }, 1500); };
-      try { navigator.clipboard.writeText(b.dataset.copy).then(done, done); } catch (e) { done(); }
-    });
-  });
 
-  function fail(msg, el) {
+  function fail(msg, elm) {
     $('err').textContent = msg;
-    if (el) {
-      el.classList.add('invalid');
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      if (el.focus) try { el.focus({ preventScroll: true }); } catch (e) {}
+    if (elm) {
+      elm.classList.add('invalid');
+      elm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (elm.focus) try { elm.focus({ preventScroll: true }); } catch (e) {}
     }
     return false;
   }
 
   function validate(d) {
+    var S = CFG.sections;
     if (!d.name.trim()) return fail('กรุณากรอกชื่อ-นามสกุล', $('name'));
     if (!/^[0-9A-Za-z]{1,20}$/.test(d.studentId.trim())) return fail('กรุณากรอกรหัสนักศึกษา (ไม่ทราบใส่ 000)', $('studentId'));
     if (!/^0\d{8,9}$/.test(d.phone)) return fail('เบอร์โทรศัพท์ต้องเป็นตัวเลข 9-10 หลัก ขึ้นต้นด้วย 0', $('phone'));
@@ -427,18 +529,17 @@
       if (!d.reason.trim()) return fail('กรุณาระบุเหตุผลที่ไม่สามารถเข้าร่วมได้', $('reason'));
       return true;
     }
-    if (!d.travel) return fail('กรุณาเลือกการเดินทาง', $('travelBox'));
-    if (!thDate(d.payDate)) return fail('กรุณาเลือกวันที่วางแผนจะชำระเงิน', $('payDate'));
-    if (d.shirt === 'สั่งซื้อ') {
+    if (S.travel && !d.travel) return fail('กรุณาเลือกการเดินทาง', $('travelBox'));
+    if (S.shirt && d.shirt === 'สั่งซื้อ') {
       if (!d.size) return fail('กรุณาเลือกไซส์เสื้อ', $('size'));
       if (!d.shipping.trim()) return fail('กรุณาระบุข้อมูลสำหรับการจัดส่ง', $('shipping'));
     }
+    if (S.payment && S.payDate && !thDate(d.payDate)) return fail('กรุณาเลือกวันที่วางแผนจะชำระเงิน', $('payDate'));
     return true;
   }
 
   function post(d) {
-    // เปิดผ่าน Apps Script ใช้ google.script.run / เปิดผ่าน GitHub Pages ใช้ fetch
-    if (window.google && google.script && google.script.run) {
+    if (inGas) {
       return new Promise(function (res) {
         google.script.run
           .withSuccessHandler(res)
@@ -452,9 +553,11 @@
 
   var sending = false;
   function send() {
-    if (sending) return;
-    document.querySelectorAll('.invalid').forEach(function (el) { el.classList.remove('invalid'); });
+    if (sending || !CFG) return;
+    document.querySelectorAll('.invalid').forEach(function (x) { x.classList.remove('invalid'); });
+    var S = CFG.sections, attending = val('attend') === 'เข้าร่วม';
     var d = {
+      e: CFG.id,
       name: $('name').value, studentId: $('studentId').value,
       phone: $('phone').value.replace(/\D/g, ''),
       faculty: val('faculty'), major: $('major').value, cohort: $('cohort').value,
@@ -462,14 +565,14 @@
       followers: followers(), shirt: val('shirt'), size: $('size').value,
       shipping: $('shipping').value, transfer: $('transfer').value,
       payDate: $('payDate').value,
-      slip: val('attend') === 'เข้าร่วม' ? slipData : null,
+      slip: attending && S.payment && S.slip ? slipData : null,
       website: $('website').value
     };
     if (!validate(d)) return;
 
     $('err').textContent = '';
     sending = true;
-    $('btn').disabled = true; $('btn').textContent = slipData && d.slip ? 'กำลังอัปโหลด…' : 'กำลังส่ง…';
+    $('btn').disabled = true; $('btn').textContent = d.slip ? 'กำลังอัปโหลด…' : 'กำลังส่ง…';
 
     post(d).then(function (r) {
       if (r && r.ok) {
@@ -477,7 +580,7 @@
         document.body.style.paddingBottom = '0';
         if (r.attending) {
           $('doneTotal').textContent = fmt(r.total) + ' บาท';
-          $('doneMsg').textContent = 'กรุณาโอนตามบัญชีของกลุ่ม/คณะของท่าน';
+          $('doneMsg').textContent = S.payment ? 'กรุณาโอนตามบัญชีของกลุ่ม/คณะของท่าน' : 'บันทึกการลงทะเบียนแล้ว';
         } else {
           $('doneMsg').textContent = 'บันทึกเหตุผลที่ไม่สามารถเข้าร่วมแล้ว';
         }
@@ -493,8 +596,6 @@
   }
   $('btn').addEventListener('click', send);
   $('formArea').addEventListener('submit', function (e) { e.preventDefault(); send(); });
-
-  refresh();
 </script>
 </body>
 </html>
